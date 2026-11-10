@@ -16,7 +16,7 @@ from core.genetic_algorithm import ProgressCallback
 from services.data_loader import Datasets, load_datasets
 from services.gemini_service import GeminiService
 from services.strategy_service import ranked_records, strategy_record
-from services.validation_service import FarmProfile
+from services.validation_service import FarmProfile, FarmValidationError
 from simulation.farm_simulator import FarmContext, build_context
 from simulation.weather_simulator import Scenario
 
@@ -42,9 +42,22 @@ class Orchestrator:
         self.evolution = EvolutionAgent()
         self.research = ResearchAgent(self.gemini)
 
-    def prepare(self, farm_input: dict | FarmProfile) -> tuple[FarmProfile, AgronomyReport, FarmContext]:
+    def to_profile(self, farm_input: str | dict | FarmProfile, use_gemini: bool = True) -> FarmProfile:
+        """Accept a FarmProfile, a structured dict or a natural-language description."""
+        if isinstance(farm_input, FarmProfile):
+            return farm_input
+        if isinstance(farm_input, str):
+            parsed = self.farm_input.from_text(farm_input, use_gemini)
+            if parsed.profile is None:
+                problems = [f"Missing {f}" for f in parsed.missing] + parsed.errors
+                raise FarmValidationError(problems or ["Could not read a farm profile from the text"])
+            return parsed.profile
+        return self.farm_input.from_form(farm_input)
+
+    def prepare(self, farm_input: str | dict | FarmProfile,
+                use_gemini: bool = True) -> tuple[FarmProfile, AgronomyReport, FarmContext]:
         """Validate input, run agronomy checks and build the simulation context."""
-        profile = farm_input if isinstance(farm_input, FarmProfile) else self.farm_input.from_form(farm_input)
+        profile = self.to_profile(farm_input, use_gemini)
         agronomy = self.agronomy.assess(profile)
         context = build_context(profile, self.datasets, agronomy.feasible_options)
         return profile, agronomy, context
@@ -70,11 +83,11 @@ class Orchestrator:
             "data_note": SYNTHETIC_DATA_NOTICE,
         }
 
-    def run(self, farm_input: dict | FarmProfile, weights: dict | None = None,
+    def run(self, farm_input: str | dict | FarmProfile, weights: dict | None = None,
             ga_config: GAConfig | None = None, scenario_ids: list[str] | None = None,
             custom_scenarios: list[Scenario] | None = None, use_gemini: bool = True,
             progress: ProgressCallback | None = None) -> dict:
-        profile, agronomy, context = self.prepare(farm_input)
+        profile, agronomy, context = self.prepare(farm_input, use_gemini)
         if not agronomy.ok:
             raise ValueError("; ".join(m["message"] for m in agronomy.messages if m["level"] == "error"))
         scenarios = self.scenario.select(scenario_ids, custom_scenarios)
@@ -115,6 +128,7 @@ class Orchestrator:
             "scenario_results": {"best": evaluation["table"].to_dict("records"), "ranked": scenario_results},
             "research_report": research,
             "assumptions": ASSUMPTIONS,
+            "ai_status": self.gemini.status(),
             "optimization": {"config": asdict(ga.config), "weights": evolution.weights,
                              "evaluations": ga.evaluations, "runtime_s": ga.runtime_s,
                              "profit_ceiling": evolution.profit_ceiling},

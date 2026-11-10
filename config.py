@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -102,7 +102,7 @@ class GAConfig:
 
 @dataclass(frozen=True)
 class GeminiSettings:
-    api_key: str
+    api_key: str = field(repr=False)  # never shown in logs or tracebacks
     model: str
 
     @property

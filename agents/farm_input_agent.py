@@ -7,7 +7,8 @@ from dataclasses import dataclass, field
 from config import SEASONS
 from services.data_loader import Datasets
 from services.gemini_service import GeminiService
-from services.validation_service import FarmProfile, sanitize_parsed_farm, validate_farm_input
+from services.validation_service import (FarmProfile, FarmValidationError, sanitize_parsed_farm,
+                                        validate_farm_input)
 from utils.calculations import acres_to_ha
 
 REQUIRED_FIELDS = ["farm_name", "total_area_ha", "n_plots", "soil_type", "soil_ph", "soil_health_index",
@@ -20,6 +21,18 @@ class ParseResult:
     missing: list[str]
     notes: list[str] = field(default_factory=list)
     source: str = "rules"
+    profile: FarmProfile | None = None
+    errors: list[str] = field(default_factory=list)
+
+    @property
+    def complete(self) -> bool:
+        return self.profile is not None
+
+    def to_json(self) -> dict:
+        """Structured farm profile JSON (the validated profile when complete, else the partial values)."""
+        return {"source": self.source, "complete": self.complete,
+                "farm_profile": self.profile.to_dict() if self.profile else self.values,
+                "missing_fields": self.missing, "errors": self.errors, "notes": self.notes}
 
 
 def _num(text: str) -> float:
@@ -97,4 +110,10 @@ class FarmInputAgent:
         missing = [f for f in REQUIRED_FIELDS if f not in values]
         if "rainfall_mm" in values and "seasons" in values:
             missing += [f"rainfall_mm.{s}" for s in values["seasons"] if s not in values["rainfall_mm"]]
-        return ParseResult(values, missing, notes + sanitize_notes, source)
+        result = ParseResult(values, missing, notes + sanitize_notes, source)
+        if not missing:
+            try:
+                result.profile = self.from_form(values)
+            except FarmValidationError as exc:
+                result.errors = exc.errors
+        return result
