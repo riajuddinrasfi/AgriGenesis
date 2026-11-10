@@ -120,6 +120,24 @@ Every file carries a `data_note` marking it as synthetic. `services/data_loader.
 
 A missing file, malformed CSV/JSON or invalid value raises a `DataError` naming the file, row and column.
 
+## Project structure
+
+```text
+AgriGenesis/
+├── app.py, config.py        # Streamlit entry point and central configuration
+├── agents/                  # Orchestrator + 6 pipeline agents
+├── core/                    # Genetic Algorithm (chromosome, operators, constraints, fitness)
+├── simulation/              # Deterministic crop, soil, water, weather and economic simulator
+├── services/                # Data loading, validation, Gemini, strategy and report services
+├── data/                    # Synthetic CSV datasets and sample_farm.json
+├── dashboard/               # Six Streamlit pages
+├── utils/                   # Small numeric and formatting helpers
+├── outputs/                 # Saved strategies, reports and charts
+└── tests/                   # pytest suite
+```
+
+See [STRUCTURE.md](STRUCTURE.md) for every file and how the modules call each other.
+
 ## Installation
 
 Requires Python 3.10+.
