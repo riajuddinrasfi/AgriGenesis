@@ -45,6 +45,17 @@ def unverified_numbers(text: str, facts: dict) -> list[str]:
     return sorted(set(suspicious))
 
 
+def rounded(obj):
+    """Display precision for AI prompts: whole units from 100 upwards, three decimals below."""
+    if isinstance(obj, dict):
+        return {k: rounded(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [rounded(v) for v in obj]
+    if isinstance(obj, float):
+        return round(obj) if abs(obj) >= 100 else round(obj, 3)
+    return obj
+
+
 class ResearchAgent:
     def __init__(self, gemini: GeminiService | None = None):
         self.gemini = gemini or GeminiService()
@@ -63,7 +74,7 @@ class ResearchAgent:
         strongest = max(c, key=lambda k: facts["weights"][k] * c[k])
         weakest = min(c, key=c.get)
         lines.append("### Trade-offs")
-        lines.append(f"- Normalised scores: " + ", ".join(f"{k} {v:.2f}" for k, v in c.items()) + ".")
+        lines.append("- Normalised scores: " + ", ".join(f"{k} {v:.2f}" for k, v in c.items()) + ".")
         lines.append(f"- The largest weighted contribution comes from **{strongest}**; the weakest score is "
                      f"**{weakest}**, which is where this plan gives ground.")
         lines.append("### Performance under adverse scenarios")
@@ -85,6 +96,7 @@ class ResearchAgent:
             if use_gemini:
                 result["warnings"].append("Gemini API key not configured; showing the rule-based explanation.")
             return result
+        facts = rounded(facts)  # avoids the model echoing values like 5451.971793640746
         text = self.gemini.explain_strategy(facts)
         if not text:
             result["warnings"].append(f"Gemini explanation unavailable ({self.gemini.last_error}); "

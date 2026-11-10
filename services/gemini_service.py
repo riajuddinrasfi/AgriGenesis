@@ -156,7 +156,10 @@ class GeminiService:
     def _get_client(self):
         if self._client is None:
             from google import genai  # imported lazily so the app starts without touching the SDK
-            self._client = genai.Client(api_key=self.settings.api_key)
+            from google.genai import types
+            # Bounded timeout and retries so an overloaded model falls back instead of freezing the app.
+            self._client = genai.Client(api_key=self.settings.api_key, http_options=types.HttpOptions(
+                timeout=self.settings.timeout_s * 1000, retry_options=types.HttpRetryOptions(attempts=2)))
         return self._client
 
     def generate_text(self, prompt: str, system_instruction: str | None = None, json_mode: bool = False,

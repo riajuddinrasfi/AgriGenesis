@@ -16,6 +16,8 @@ CHART_DIR = OUTPUT_DIR / "charts"
 
 load_dotenv(BASE_DIR / ".env")
 
+DEFAULT_GEMINI_MODEL = "gemini-3.5-flash"
+
 FALLOW = "FALLOW"
 
 SYNTHETIC_DATA_NOTICE = (
@@ -104,15 +106,29 @@ class GAConfig:
 class GeminiSettings:
     api_key: str = field(repr=False)  # never shown in logs or tracebacks
     model: str
+    timeout_s: int = 30
 
     @property
     def configured(self) -> bool:
         return bool(self.api_key) and not self.api_key.startswith("your-")
 
 
+def _setting(name: str) -> str:
+    """Environment variable (``.env`` is loaded on import), else Streamlit secrets (Community Cloud)."""
+    value = os.getenv(name, "").strip()
+    if value:
+        return value
+    try:
+        import streamlit as st
+        return str(st.secrets.get(name, "")).strip()
+    except Exception:  # no secrets.toml, or Streamlit not running
+        return ""
+
+
 def get_gemini_settings() -> GeminiSettings:
-    """Read Gemini settings from the environment (``.env`` is loaded on import)."""
+    timeout = _setting("GEMINI_TIMEOUT_S")
     return GeminiSettings(
-        api_key=os.getenv("GEMINI_API_KEY", "").strip(),
-        model=os.getenv("GEMINI_MODEL", "").strip() or "gemini-2.5-flash",
+        api_key=_setting("GEMINI_API_KEY"),
+        model=_setting("GEMINI_MODEL") or DEFAULT_GEMINI_MODEL,
+        timeout_s=int(timeout) if timeout.isdigit() and int(timeout) > 0 else 30,
     )

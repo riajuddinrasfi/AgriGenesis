@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 import pandas as pd
 
 from config import MAX_FERTILIZER_RATIO, SEASONS
-from core.chromosome import Gene
 from services.data_loader import Datasets
 from services.validation_service import FarmProfile
 from simulation import soil_simulator as soil_sim

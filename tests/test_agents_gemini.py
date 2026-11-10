@@ -2,20 +2,23 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import streamlit
 from google.genai import errors
 
 from agents.agronomy_agent import AgronomyAgent
 from agents.farm_input_agent import FarmInputAgent
 from agents.orchestrator import Orchestrator
+from agents.research_agent import ResearchAgent
 from agents.scenario_agent import ScenarioAgent
 from agents.simulation_agent import SimulationAgent
-from config import GAConfig, GeminiSettings
+from config import DEFAULT_GEMINI_MODEL, GAConfig, GeminiSettings, get_gemini_settings
 from services.gemini_service import FARM_SCHEMA, SCENARIO_SCHEMA, GeminiService, redact_secrets, validate_json
 from services.validation_service import FarmValidationError
 
@@ -65,7 +68,7 @@ def test_env_variables_are_read(monkeypatch):
     assert settings.api_key == KEY and settings.model == "gemini-test-model" and settings.configured
     monkeypatch.setenv("GEMINI_API_KEY", "")
     monkeypatch.delenv("GEMINI_MODEL")
-    assert not get_gemini_settings().configured and get_gemini_settings().model == "gemini-2.5-flash"
+    assert not get_gemini_settings().configured and get_gemini_settings().model == DEFAULT_GEMINI_MODEL
 
 
 def test_real_sdk_client_is_built_lazily_without_network():
@@ -217,7 +220,7 @@ def test_orchestrator_with_gemini_text_input(sample_input):
     assert result["research_report"]["deterministic_text"]  # rule-based numbers are always kept
     assert len(models.calls) == 2  # one parse + one explanation; none during optimisation
     facts = json.loads(models.calls[1]["contents"].split("FACTS (JSON):\n", 1)[1])
-    assert facts["best_metrics"]["net_profit"] == pytest.approx(result["best_strategy"]["metrics"]["net_profit"])
+    assert facts["best_metrics"]["net_profit"] == pytest.approx(result["best_strategy"]["metrics"]["net_profit"], abs=0.5)
 
 
 def test_orchestrator_rejects_incomplete_text():
@@ -245,3 +248,25 @@ def test_no_circular_imports():
         run = subprocess.run([sys.executable, "-c", script, module], cwd=ROOT, capture_output=True,
                              text=True, env={"PATH": "", "SYSTEMROOT": __import__("os").environ.get("SYSTEMROOT", "")})
         assert run.returncode == 0, f"{module}: {run.stderr[-500:]}"
+
+
+def test_research_prompt_uses_display_precision():
+    service, models = enabled("### Summary\nA balanced plan.")
+    facts = {"best_fitness": 0.6394154649511515, "best_metrics": {"net_profit": 5451.971793640746}}
+    agent = ResearchAgent(service)
+    agent.deterministic_explanation = lambda f: "rule-based text"
+    report = agent.explain(facts)
+    prompt = models.calls[0]["contents"]
+    assert report["source"] == "gemini" and "5452" in prompt and "0.639" in prompt
+    assert not re.search(r"\d\.\d{4,}", prompt)
+
+
+def test_settings_fall_back_to_streamlit_secrets(monkeypatch):
+    for name in ("GEMINI_API_KEY", "GEMINI_MODEL", "GEMINI_TIMEOUT_S"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr(streamlit, "secrets", {"GEMINI_API_KEY": KEY, "GEMINI_MODEL": "cloud-model",
+                                               "GEMINI_TIMEOUT_S": "12"})
+    settings = get_gemini_settings()
+    assert settings.configured and settings.model == "cloud-model" and settings.timeout_s == 12
+    monkeypatch.setenv("GEMINI_MODEL", "env-model")  # environment wins over secrets
+    assert get_gemini_settings().model == "env-model"
