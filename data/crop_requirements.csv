@@ -1,0 +1,10 @@
+crop_id,allowed_seasons,suitable_soils,min_ph,max_ph,water_requirement_mm,fertilizer_requirement_kg_per_ha,drought_tolerance,waterlogging_tolerance,soil_health_effect
+RICE,monsoon,clay|clay_loam|loam,5.0,7.5,1200,180,0.2,0.9,-1.0
+WHEAT,winter,loam|clay_loam|sandy_loam,6.0,7.8,450,160,0.4,0.2,-1.5
+MAIZE,monsoon|winter|summer,loam|sandy_loam|clay_loam,5.5,7.5,550,200,0.4,0.2,-2.0
+POTATO,winter,loam|sandy_loam,5.0,6.8,500,220,0.3,0.1,-2.5
+LENTIL,winter,loam|clay_loam|sandy_loam,6.0,8.0,300,40,0.7,0.2,2.5
+MUSTARD,winter,loam|sandy_loam|clay_loam,6.0,7.8,350,120,0.6,0.2,-1.0
+TOMATO,winter|summer,loam|sandy_loam,5.5,7.0,600,250,0.3,0.1,-2.5
+JUTE,monsoon|summer,loam|clay_loam|clay,5.5,7.5,700,90,0.3,0.7,-0.5
+MUNGBEAN,summer|monsoon,loam|sandy_loam|clay_loam,6.0,7.5,350,30,0.6,0.2,2.0

@@ -1,0 +1,14 @@
+.env
+*.env
+!.env.example
+secrets.toml
+.streamlit/secrets.toml
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+outputs/strategies/*
+outputs/reports/*
+outputs/charts/*
+!outputs/**/.gitkeep

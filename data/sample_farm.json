@@ -1,0 +1,16 @@
+{
+  "data_note": "Synthetic sample farm for demonstration only. Not verified agricultural data.",
+  "farm_name": "Green Valley Farm",
+  "total_area_ha": 4.0,
+  "n_plots": 4,
+  "soil_type": "loam",
+  "soil_ph": 6.5,
+  "soil_health_index": 65,
+  "available_water_m3": 30000,
+  "budget_usd": 12000,
+  "seasons": ["monsoon", "winter", "summer"],
+  "rainfall_mm": {"monsoon": 1100, "winter": 80, "summer": 250},
+  "preferred_crops": [],
+  "excluded_crops": [],
+  "weights": {"profit": 0.35, "yield": 0.20, "water": 0.15, "soil": 0.15, "resilience": 0.15}
+}

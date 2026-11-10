@@ -1,0 +1,10 @@
+crop_id,crop_name,crop_family,base_yield_t_per_ha,selling_price_usd_per_t,growth_duration_days,data_note
+RICE,Rice,cereal,5.0,380,120,synthetic sample data
+WHEAT,Wheat,cereal,3.5,330,115,synthetic sample data
+MAIZE,Maize,cereal,6.0,260,100,synthetic sample data
+POTATO,Potato,tuber,22.0,160,95,synthetic sample data
+LENTIL,Lentil,legume,1.3,900,100,synthetic sample data
+MUSTARD,Mustard,oilseed,1.5,750,90,synthetic sample data
+TOMATO,Tomato,vegetable,25.0,150,95,synthetic sample data
+JUTE,Jute,fibre,2.6,600,110,synthetic sample data
+MUNGBEAN,Mungbean,legume,1.2,1000,70,synthetic sample data
