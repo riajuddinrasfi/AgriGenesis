@@ -1,5 +1,5 @@
-soil_type,soil_name,fertility_factor,effective_rainfall_fraction,drainage_factor,description
-loam,Loam,1.00,0.65,0.70,Balanced texture with good fertility and drainage (synthetic profile)
-clay_loam,Clay loam,0.95,0.75,0.45,Holds water well; moderate drainage (synthetic profile)
-sandy_loam,Sandy loam,0.85,0.50,0.90,Drains quickly; lower water holding (synthetic profile)
-clay,Clay,0.90,0.80,0.25,High water holding; poor drainage (synthetic profile)
+soil_type,soil_name,fertility_factor,effective_rainfall_fraction,drainage_factor,description,data_note
+loam,Loam,1.00,0.65,0.70,Balanced texture with good fertility and drainage (synthetic profile),synthetic sample data
+clay_loam,Clay loam,0.95,0.75,0.45,Holds water well; moderate drainage (synthetic profile),synthetic sample data
+sandy_loam,Sandy loam,0.85,0.50,0.90,Drains quickly; lower water holding (synthetic profile),synthetic sample data
+clay,Clay,0.90,0.80,0.25,High water holding; poor drainage (synthetic profile),synthetic sample data

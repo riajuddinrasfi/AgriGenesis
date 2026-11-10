@@ -1,4 +1,4 @@
-farm_id,farm_name,location_label,total_area_ha,n_plots,soil_type,soil_ph,soil_health_index,available_water_m3,budget_usd,seasons,rainfall_monsoon_mm,rainfall_winter_mm,rainfall_summer_mm,preferred_crops,excluded_crops
-F001,Green Valley Farm,Synthetic delta region,4.0,4,loam,6.5,65,30000,12000,monsoon|winter|summer,1100,80,250,,
-F002,Riverbend Smallholding,Synthetic floodplain,2.0,2,clay_loam,6.8,55,12000,5000,monsoon|winter,1300,60,200,RICE|LENTIL|MUSTARD,
-F003,Dryland Plateau Farm,Synthetic upland,6.0,6,sandy_loam,7.0,48,20000,15000,monsoon|winter|summer,700,40,150,,RICE
+farm_id,farm_name,location_label,total_area_ha,n_plots,soil_type,soil_ph,soil_health_index,available_water_m3,budget_usd,seasons,rainfall_monsoon_mm,rainfall_winter_mm,rainfall_summer_mm,preferred_crops,excluded_crops,data_note
+F001,Green Valley Farm,Synthetic delta region,4.0,4,loam,6.5,65,30000,12000,monsoon|winter|summer,1100,80,250,,,synthetic sample data
+F002,Riverbend Smallholding,Synthetic floodplain,2.0,2,clay_loam,6.8,55,12000,5000,monsoon|winter,1300,60,200,RICE|LENTIL|MUSTARD,,synthetic sample data
+F003,Dryland Plateau Farm,Synthetic upland,6.0,6,sandy_loam,7.0,48,20000,15000,monsoon|winter|summer,700,40,150,,RICE,synthetic sample data

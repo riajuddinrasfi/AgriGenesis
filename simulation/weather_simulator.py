@@ -3,16 +3,9 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-from config import PLANTING_WINDOWS, SEASONS
+from config import PLANTING_WINDOWS, SCENARIO_LIMITS, SEASONS
 
 # Allowed ranges for every scenario parameter (also used to sanitise AI output).
-SCENARIO_LIMITS: dict[str, tuple[float, float]] = {
-    "rainfall_multiplier": (0.0, 3.0),
-    "yield_stress_factor": (0.3, 1.2),
-    "input_cost_multiplier": (0.5, 3.0),
-    "market_price_multiplier": (0.3, 2.0),
-    "water_availability_multiplier": (0.0, 2.0),
-}
 
 
 @dataclass(frozen=True)

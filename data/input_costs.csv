@@ -1,10 +1,10 @@
-crop_id,seed_cost_usd_per_ha,labor_cost_usd_per_ha,fertilizer_cost_usd_per_kg,irrigation_cost_usd_per_m3
-RICE,60,350,0.90,0.05
-WHEAT,70,200,0.90,0.05
-MAIZE,120,250,0.90,0.05
-POTATO,900,600,0.95,0.05
-LENTIL,50,150,1.10,0.05
-MUSTARD,30,150,0.90,0.05
-TOMATO,300,900,1.00,0.05
-JUTE,40,400,0.90,0.05
-MUNGBEAN,45,150,1.10,0.05
+crop_id,seed_cost_usd_per_ha,labor_cost_usd_per_ha,fertilizer_cost_usd_per_kg,irrigation_cost_usd_per_m3,data_note
+RICE,60,350,0.90,0.05,synthetic sample data
+WHEAT,70,200,0.90,0.05,synthetic sample data
+MAIZE,120,250,0.90,0.05,synthetic sample data
+POTATO,900,600,0.95,0.05,synthetic sample data
+LENTIL,50,150,1.10,0.05,synthetic sample data
+MUSTARD,30,150,0.90,0.05,synthetic sample data
+TOMATO,300,900,1.00,0.05,synthetic sample data
+JUTE,40,400,0.90,0.05,synthetic sample data
+MUNGBEAN,45,150,1.10,0.05,synthetic sample data

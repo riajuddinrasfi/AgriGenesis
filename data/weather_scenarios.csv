@@ -1,6 +1,6 @@
-scenario_id,scenario_name,rainfall_multiplier,yield_stress_factor,input_cost_multiplier,market_price_multiplier,water_availability_multiplier,description
-normal,Normal conditions,1.00,1.00,1.00,1.00,1.00,Baseline synthetic season with typical rainfall and prices
-drought,Drought,0.50,0.92,1.00,1.05,0.70,Half the usual rainfall; reduced irrigation supply and heat stress
-excess_rainfall,Excess rainfall,1.60,0.95,1.00,1.00,1.00,Heavy rainfall causing waterlogging on poorly drained plots
-input_price_shock,Input-price shock,1.00,1.00,1.35,1.00,1.00,Seed fertilizer labour and irrigation costs rise by 35%
-market_price_drop,Market-price drop,1.00,1.00,1.00,0.75,1.00,Crop selling prices fall by 25%
+scenario_id,scenario_name,rainfall_multiplier,yield_stress_factor,input_cost_multiplier,market_price_multiplier,water_availability_multiplier,description,data_note
+normal,Normal conditions,1.00,1.00,1.00,1.00,1.00,Baseline synthetic season with typical rainfall and prices,synthetic sample data
+drought,Drought,0.50,0.92,1.00,1.05,0.70,Half the usual rainfall; reduced irrigation supply and heat stress,synthetic sample data
+excess_rainfall,Excess rainfall,1.60,0.95,1.00,1.00,1.00,Heavy rainfall causing waterlogging on poorly drained plots,synthetic sample data
+input_price_shock,Input-price shock,1.00,1.00,1.35,1.00,1.00,Seed fertilizer labour and irrigation costs rise by 35%,synthetic sample data
+market_price_drop,Market-price drop,1.00,1.00,1.00,0.75,1.00,Crop selling prices fall by 25%,synthetic sample data

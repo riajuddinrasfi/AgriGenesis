@@ -45,6 +45,15 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     "resilience": 0.15,
 }
 
+# Allowed range of each scenario multiplier (dataset validation and custom scenarios).
+SCENARIO_LIMITS: dict[str, tuple[float, float]] = {
+    "rainfall_multiplier": (0.0, 3.0),
+    "yield_stress_factor": (0.3, 1.2),
+    "input_cost_multiplier": (0.5, 3.0),
+    "market_price_multiplier": (0.3, 2.0),
+    "water_availability_multiplier": (0.0, 2.0),
+}
+
 # Simulation constants (transparent, synthetic assumptions).
 MAX_FERTILIZER_RATIO = 1.25      # fertilizer_level 1.0 applies 125% of the crop requirement
 WATERLOGGING_THRESHOLD = 1.10    # water supply above 110% of requirement starts waterlogging

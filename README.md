@@ -110,6 +110,13 @@ yield = area x base_yield x water_factor x soil_factor x weather_factor x nutrie
 | `weather_scenarios.csv` | Normal, drought, excess rainfall, input-price shock, market-price drop multipliers |
 | `sample_farm.json` | Default 4 ha, 4-plot farm loaded at start-up |
 
+Every file carries a `data_note` marking it as synthetic. `services/data_loader.py` checks the files on load:
+- all required columns are present and IDs are unique
+- numbers are within their allowed ranges and units, `min_ph < max_ph`, and seasons are valid
+- crop, soil and scenario references match across files, and the `normal` scenario exists
+
+A missing file, malformed CSV/JSON or invalid value raises a `DataError` naming the file, row and column.
+
 ## Installation
 
 Requires Python 3.10+.
