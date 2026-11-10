@@ -1,0 +1,13 @@
+crop,seed_per_ha,fertilizer_per_ha,pesticide_per_ha,machinery_per_ha
+Aman Rice,140,280,105,175
+Boro Rice,190,380,140,240
+Wheat,110,220,80,140
+Maize,150,300,110,190
+Jute,120,240,90,150
+Potato,720,540,270,270
+Tomato,520,1040,650,390
+Lentil,95,115,60,110
+Mung Bean,90,100,60,100
+Soybean,125,150,85,140
+Mustard,80,160,60,100
+Onion,880,660,330,330
