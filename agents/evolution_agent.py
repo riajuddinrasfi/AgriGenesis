@@ -1,10 +1,14 @@
-"""Evolution Agent: configures and runs the Genetic Algorithm."""
+"""Evolution Agent: configures and runs the Genetic Algorithm.
+
+Optimisation is pure deterministic Python: Gemini is never called while evolving.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 from config import GAConfig
-from core.fitness import FitnessEvaluator
+from core.chromosome import Chromosome
+from core.fitness import FitnessEvaluator, FitnessResult
 from core.genetic_algorithm import GAResult, GeneticAlgorithm, ProgressCallback
 from simulation.farm_simulator import FarmContext
 from simulation.weather_simulator import Scenario
@@ -15,6 +19,23 @@ class EvolutionOutput:
     ga: GAResult
     weights: dict[str, float]
     profit_ceiling: float
+
+    @property
+    def best(self) -> Chromosome:
+        return self.ga.best
+
+    @property
+    def best_fitness(self) -> FitnessResult:
+        return self.ga.best_fitness
+
+    @property
+    def ranked(self) -> list[tuple[Chromosome, FitnessResult]]:
+        return self.ga.ranked
+
+    @property
+    def history(self) -> list[dict]:
+        """Per-generation convergence rows (best, mean and worst fitness, diversity, evaluations)."""
+        return self.ga.history
 
 
 class EvolutionAgent:

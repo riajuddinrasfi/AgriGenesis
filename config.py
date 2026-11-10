@@ -94,6 +94,10 @@ class GAConfig:
             raise ValueError("tournament_size must be between 2 and population_size")
         if not 0 <= self.elitism < self.population_size:
             raise ValueError("elitism must be between 0 and population_size - 1")
+        if self.top_k < 1:
+            raise ValueError("top_k must be at least 1")
+        if not isinstance(self.seed, int) or isinstance(self.seed, bool) or self.seed < 0:
+            raise ValueError("seed must be a non-negative integer")
 
 
 @dataclass(frozen=True)
