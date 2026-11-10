@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from config import SEASONS, SYNTHETIC_DATA_NOTICE
-from dashboard import ACCENT, MUTED, badge, get_orchestrator, plan_pivot, style_figure
+from dashboard import ACCENT, MUTED, badge, get_orchestrator, plan_pivot, result_is_stale, style_figure
 from utils.helpers import money
 
 
@@ -43,8 +43,9 @@ def render() -> None:
     cols[1].metric("Generations", len(result["fitness_history"]))
     cols[2].metric("Strategies evaluated", f"{opt['evaluations']:,}")
     cols[3].metric("Runtime", f"{opt['runtime_s']:.1f} s")
-    if result["farm_profile"]["farm_name"] != farm.get("farm_name"):
-        st.warning("These results are for a previous farm setup; re-run the optimiser to update them.")
+    if result_is_stale():
+        st.warning("The farm, priorities or scenarios changed since this run; click **Evolve My Farm** in "
+                   "Evolution Lab to update the results.")
 
     st.subheader("Key results (normal scenario)")
     m, c = result["best_strategy"]["metrics"], result["best_strategy"]["components"]

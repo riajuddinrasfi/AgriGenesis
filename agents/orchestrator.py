@@ -83,6 +83,14 @@ class Orchestrator:
             "data_note": SYNTHETIC_DATA_NOTICE,
         }
 
+    def explain_result(self, result: dict, use_gemini: bool = True) -> dict:
+        """(Re)generate the research explanation for a finished run without re-optimising."""
+        fields = {k: v for k, v in result["farm_profile"].items() if k != "plot_area_ha"}
+        profile = self.farm_input.from_form(fields)
+        scenarios = [Scenario(**s) for s in result["scenarios"].values()]
+        facts = self._facts(profile, result["best_strategy"], scenarios, result["optimization"]["weights"])
+        return self.research.explain(facts, use_gemini)
+
     def run(self, farm_input: str | dict | FarmProfile, weights: dict | None = None,
             ga_config: GAConfig | None = None, scenario_ids: list[str] | None = None,
             custom_scenarios: list[Scenario] | None = None, use_gemini: bool = True,

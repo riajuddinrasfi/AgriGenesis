@@ -5,7 +5,8 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from config import GAConfig
-from dashboard import ACCENT, ACCENT_LIGHT, MUTED, get_orchestrator, plan_pivot, style_figure
+from dashboard import (ACCENT, ACCENT_LIGHT, MUTED, current_inputs, get_orchestrator, plan_pivot, result_is_stale,
+                       style_figure)
 from services.strategy_service import save_result
 from utils.helpers import money
 
@@ -62,6 +63,7 @@ def _run(cfg: GAConfig) -> None:
         st.error(str(exc))
         return
     st.session_state.result = result
+    st.session_state.result_inputs = current_inputs()
     st.session_state.scenario_eval = None
     st.session_state.result_path = str(save_result(result))
     bar.empty()
@@ -74,14 +76,20 @@ def render() -> None:
     if st.session_state.farm_profile is None:
         st.warning("Validate a farm in **Farm Setup** before running the optimiser.")
         return
-    n_scen = 1 + len([s for s in st.session_state.scenario_ids if s != "normal"]) + len(st.session_state.custom_scenarios)
-    st.caption(f"Each candidate is simulated under {n_scen} scenario(s); up to "
-               f"{cfg.population_size * cfg.generations:,} candidate evaluations (repeats are cached).")
-    if st.button("Run evolution", type="primary"):
+    orch = get_orchestrator()
+    scenarios = orch.scenario.select(st.session_state.scenario_ids, st.session_state.custom_scenarios)
+    st.markdown("**Scenarios:** " + ", ".join(s.scenario_name for s in scenarios)
+                + "  \n**Priorities:** " + ", ".join(f"{k} {v:.2f}" for k, v in st.session_state.weights.items()))
+    st.caption(f"Each candidate is simulated under {len(scenarios)} scenario(s); up to "
+               f"{cfg.population_size * cfg.generations:,} candidate evaluations (repeats are cached). "
+               "Change scenarios in Scenario Lab and priorities in Farm Setup.")
+    if st.button("Evolve My Farm", type="primary"):
         _run(cfg)
     result = st.session_state.result
     if result is None:
         return
+    if result_is_stale():
+        st.warning("The farm, priorities or scenarios changed since this run. Click **Evolve My Farm** to update.")
     history = result["fitness_history"]
     opt = result["optimization"]
     c = st.columns(4)

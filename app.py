@@ -6,7 +6,7 @@ import streamlit as st
 st.set_page_config(page_title="AgriGenesis", page_icon=":seedling:", layout="wide")
 
 from dashboard import (apply_theme, evolution_lab, farm_setup, init_state, overview,  # noqa: E402
-                       research_report, scenario_lab, strategy_comparison)
+                       research_report, result_is_stale, scenario_lab, strategy_comparison)
 
 PAGES = {
     "Overview": overview.render,
@@ -26,9 +26,15 @@ def main() -> None:
         st.caption("Evolutionary Agriculture Strategy Laboratory")
         page = st.radio("Navigate", list(PAGES), key="page", label_visibility="collapsed")
         st.divider()
-        profile = st.session_state.farm_profile
+        profile, result = st.session_state.farm_profile, st.session_state.result
+        steps = [
+            ("Farm validated", profile is not None),
+            ("Scenarios selected", bool(st.session_state.scenario_ids or st.session_state.custom_scenarios)),
+            ("Farm evolved", result is not None and not result_is_stale()),
+            ("Gemini explanation", bool(result) and result["research_report"]["source"] == "gemini"),
+        ]
+        st.markdown("\n".join(f"{'●' if done else '○'}&nbsp; {label}  " for label, done in steps))
         st.caption(f"Farm: {profile['farm_name'] if profile else 'not validated'}")
-        result = st.session_state.result
         st.caption(f"Best fitness: {result['best_fitness']:.4f}" if result else "Optimiser: not run")
     PAGES[page]()
 

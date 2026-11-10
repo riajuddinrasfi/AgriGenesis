@@ -66,11 +66,14 @@ def render() -> None:
     for w in report["warnings"]:
         st.warning(w)
     st.markdown(report["text"])
-    if orch.gemini.available and st.button("Regenerate explanation with Gemini"):
-        facts = orch._facts(orch.farm_input.from_form(result["farm_profile"]), best,
-                            orch.scenario.select(None, None), result["optimization"]["weights"])
-        result["research_report"] = orch.research.explain(facts, use_gemini=True)
-        st.rerun()
+    if orch.gemini.available:
+        label = "Regenerate Gemini explanation" if report["source"] == "gemini" else "Generate Gemini explanation"
+        if st.button(label):
+            with st.spinner("Asking Gemini to explain the simulated results..."):
+                result["research_report"] = orch.explain_result(result, use_gemini=True)
+            st.rerun()
+    else:
+        st.caption("Set GEMINI_API_KEY in .env to generate an AI explanation of these results.")
 
     st.subheader("Assumptions")
     for a in result["assumptions"]:

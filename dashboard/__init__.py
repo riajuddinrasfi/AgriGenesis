@@ -58,10 +58,22 @@ def init_state() -> None:
         "result_path": None,
         "scenario_eval": None,
         "nl_parse": None,
+        "result_inputs": None,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value
+
+
+def current_inputs() -> dict:
+    """What the next optimisation would use; compared with the inputs of the stored result."""
+    return {"farm": st.session_state.farm_profile, "weights": dict(st.session_state.weights),
+            "scenario_ids": list(st.session_state.scenario_ids),
+            "custom": [s.to_dict() for s in st.session_state.custom_scenarios]}
+
+
+def result_is_stale() -> bool:
+    return st.session_state.get("result") is not None and st.session_state.get("result_inputs") != current_inputs()
 
 
 def badge(text: str) -> str:
