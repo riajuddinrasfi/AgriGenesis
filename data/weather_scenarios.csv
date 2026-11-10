@@ -1,0 +1,7 @@
+scenario,description,probability,rainfall_factor,temp_shift,price_factor,cost_factor,pest_pressure,yield_shock
+Normal Year,Typical weather and markets,0.40,1.0,0.0,1.0,1.0,0.1,1.0
+Drought,Rainfall 40% below normal with a heat spike,0.15,0.6,1.5,1.15,1.05,0.15,0.9
+Excess Rain,Heavy monsoon with localised flooding,0.15,1.5,0.0,1.05,1.05,0.25,0.85
+Market Slump,Crop prices fall 25%,0.10,1.0,0.0,0.75,1.0,0.1,1.0
+Price Boom,Strong demand lifts prices 25%,0.10,1.0,0.0,1.25,1.05,0.1,1.0
+Pest Outbreak,Regional pest outbreak and higher input costs,0.10,1.0,0.5,1.05,1.1,0.5,1.0

@@ -1,0 +1,4 @@
+soil_profile_id,soil_type,soil_ph,soil_nitrogen,organic_matter_pct,water_holding_mm
+S01,Loam,6.5,55,2.0,150
+S02,Clay,5.8,40,1.5,180
+S03,Sandy Loam,5.2,60,1.0,100

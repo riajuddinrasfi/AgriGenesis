@@ -1,0 +1,4 @@
+farm_id,name,region,soil_profile_id,num_plots,plot_area_ha,avg_temp_wet,avg_temp_dry,rainfall_wet_mm,rainfall_dry_mm,irrigation_m3,budget,labor_days,risk_tolerance
+F001,Green Valley Farm,Rajshahi,S01,6,1.5,30,20,1100,150,40000,9000,450,0.5
+F002,Delta Smallholding,Khulna,S02,4,0.8,31,22,1500,120,8000,3500,200,0.3
+F003,Highland Agro,Sylhet,S03,8,2.0,28,18,2000,250,60000,16000,700,0.6

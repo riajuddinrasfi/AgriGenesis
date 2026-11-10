@@ -1,0 +1,13 @@
+crop,family,season_type,growth_days,yield_t_ha,price_per_t,nitrogen_effect
+Aman Rice,Poaceae,wet,140,4.5,330,-20
+Boro Rice,Poaceae,dry,150,6.0,320,-25
+Wheat,Poaceae,dry,110,3.2,290,-20
+Maize,Poaceae,any,120,7.0,230,-25
+Jute,Malvaceae,wet,120,2.8,500,-10
+Potato,Solanaceae,dry,95,22.0,160,-15
+Tomato,Solanaceae,dry,100,25.0,180,-15
+Lentil,Fabaceae,dry,110,1.3,900,30
+Mung Bean,Fabaceae,wet,70,1.2,1000,25
+Soybean,Fabaceae,wet,105,2.5,480,35
+Mustard,Brassicaceae,dry,90,1.4,700,-10
+Onion,Amaryllidaceae,dry,120,13.0,260,-10
