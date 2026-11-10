@@ -151,3 +151,11 @@ def test_journey_with_gemini_explanation(monkeypatch):
     _ok(at)
     assert fake.calls == 2 and at.session_state.result["research_report"]["text"].endswith("(synthetic data).")
     assert any("Explanation 2" in m.value for m in at.markdown)
+
+
+def test_sidebar_status_updates_on_the_same_rerun(monkeypatch):
+    at = _start(monkeypatch)
+    result = _validate_and_evolve(at, population=10, generations=2)
+    captions = [c.value for c in at.sidebar.caption]
+    assert f"Best fitness: {result['best_fitness']:.4f}" in captions
+    assert any(c.startswith("Farm: ") and "not validated" not in c for c in captions)

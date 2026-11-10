@@ -270,3 +270,27 @@ def test_settings_fall_back_to_streamlit_secrets(monkeypatch):
     assert settings.configured and settings.model == "cloud-model" and settings.timeout_s == 12
     monkeypatch.setenv("GEMINI_MODEL", "env-model")  # environment wins over secrets
     assert get_gemini_settings().model == "env-model"
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("A severe drought with fertilizer prices up 40%", {"input_cost_multiplier": 1.4, "market_price_multiplier": 1.0}),
+    ("+40% fertilizer prices", {"input_cost_multiplier": 1.4, "market_price_multiplier": 1.0}),
+    ("crop prices drop 30%", {"market_price_multiplier": 0.7, "input_cost_multiplier": 1.0}),
+    ("selling prices rise 10%", {"market_price_multiplier": 1.1}),
+    ("input costs rise 25% and rainfall falls 20%", {"input_cost_multiplier": 1.25, "rainfall_multiplier": 0.8}),
+])
+def test_rule_based_scenario_separates_input_and_market_prices(datasets, text, expected):
+    params = ScenarioAgent(datasets, GeminiService(NO_KEY)).rule_based_interpretation(text)
+    for key, value in expected.items():
+        assert params[key] == pytest.approx(value), key
+
+
+def test_gemini_3_requests_use_low_thinking():
+    models = RecordingModels(["ok", "ok"])
+    for model, thinking in (("gemini-3.5-flash", True), ("gemini-2.5-flash", False)):
+        service = GeminiService(GeminiSettings(KEY, model), SimpleNamespace(models=models))
+        assert service.generate_text("hi") == "ok"
+        config = models.calls[-1]["config"]
+        assert (config.thinking_config is not None) == thinking
+        if thinking:
+            assert config.thinking_config.thinking_level.lower() == "low"

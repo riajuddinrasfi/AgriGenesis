@@ -26,6 +26,10 @@ def main() -> None:
         st.caption("Evolutionary Agriculture Strategy Laboratory")
         page = st.radio("Navigate", list(PAGES), key="page", label_visibility="collapsed")
         st.divider()
+        status = st.empty()
+    PAGES[page]()
+    # Filled after the page runs so it reflects validation or optimisation done on this rerun.
+    with status.container():
         profile, result = st.session_state.farm_profile, st.session_state.result
         steps = [
             ("Farm validated", profile is not None),
@@ -36,7 +40,6 @@ def main() -> None:
         st.markdown("\n".join(f"{'●' if done else '○'}&nbsp; {label}  " for label, done in steps))
         st.caption(f"Farm: {profile['farm_name'] if profile else 'not validated'}")
         st.caption(f"Best fitness: {result['best_fitness']:.4f}" if result else "Optimiser: not run")
-    PAGES[page]()
 
 
 main()

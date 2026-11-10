@@ -157,9 +157,9 @@ class GeminiService:
         if self._client is None:
             from google import genai  # imported lazily so the app starts without touching the SDK
             from google.genai import types
-            # Bounded timeout and retries so an overloaded model falls back instead of freezing the app.
+            # One attempt with a deadline, so a slow or overloaded model falls back within timeout_s.
             self._client = genai.Client(api_key=self.settings.api_key, http_options=types.HttpOptions(
-                timeout=self.settings.timeout_s * 1000, retry_options=types.HttpRetryOptions(attempts=2)))
+                timeout=self.settings.timeout_s * 1000, retry_options=types.HttpRetryOptions(attempts=1)))
         return self._client
 
     def generate_text(self, prompt: str, system_instruction: str | None = None, json_mode: bool = False,
@@ -174,6 +174,9 @@ class GeminiService:
                 temperature=temperature,
                 response_mime_type="application/json" if json_mode else None,
                 response_json_schema=schema if json_mode else None,
+                # Gemini 3 models think at "high" by default; "low" roughly halves report latency.
+                thinking_config=types.ThinkingConfig(thinking_level="low")
+                if self.settings.model.startswith("gemini-3") else None,
             )
             response = self._get_client().models.generate_content(
                 model=self.settings.model, contents=prompt, config=config)
@@ -229,7 +232,10 @@ class GeminiService:
         prompt = (
             "Keys: scenario_name (short string), rainfall_multiplier (0-3), yield_stress_factor "
             "(0.3-1.2), input_cost_multiplier (0.5-3), market_price_multiplier (0.3-2), "
-            "water_availability_multiplier (0-2), description (one sentence).\n\n"
+            "water_availability_multiplier (0-2), description (one sentence).\n"
+            "input_cost_multiplier covers what the farmer pays (fertilizer, seed, fuel, labour, irrigation "
+            "prices); market_price_multiplier covers only the selling price of harvested crops. Use the exact "
+            "percentage given (e.g. +40% -> 1.4) and keep 1.0 for anything the scenario does not mention.\n\n"
             f"Scenario:\n{text[:1500]}"
         )
         return self.generate_json(prompt, system, SCENARIO_SCHEMA)

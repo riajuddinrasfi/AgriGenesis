@@ -165,7 +165,7 @@ cp .env.example .env
 ```ini
 GEMINI_API_KEY=your-key
 GEMINI_MODEL=gemini-3.5-flash   # optional; this is the default
-GEMINI_TIMEOUT_S=30             # optional; per-request timeout before falling back
+GEMINI_TIMEOUT_S=30             # optional; one attempt per call, then fall back
 ```
 
 Settings are read from environment variables first, then from Streamlit secrets (`.streamlit/secrets.toml` or
@@ -177,7 +177,8 @@ are plain Python and never call Gemini. Gemini output is schema-checked; numbers
 simulation results are flagged in the report.
 
 If a call fails (bad key, quota, unknown or overloaded model, timeout), the app shows the reason (with any key
-masked) and continues with the rule-based parser or template report. Google retires model names over time; if
+masked) and continues with the rule-based parser or template report. Each call is a single attempt limited to
+`GEMINI_TIMEOUT_S` seconds, so the slowest fallback waits about that long. Google retires model names over time; if
 the report warning says "model not found", set `GEMINI_MODEL` to a current model.
 
 ## Deploying to Streamlit Community Cloud

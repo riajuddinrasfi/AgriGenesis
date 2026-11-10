@@ -9,6 +9,10 @@ from simulation.scenario_engine import BASELINE_ID, make_custom_scenario, scenar
 from simulation.weather_simulator import SCENARIO_LIMITS, Scenario
 from utils.normalization import clip
 
+# "fertilizer prices" etc. are input costs, not crop selling prices.
+INPUT_PRICE_PHRASE = r"(fertili[sz]ers?|seeds?|fuel|diesel|labou?r|wages?|inputs?|irrigation)\s+(prices?|costs?)"
+UP, DOWN = r"(rise|rising|increase|up|higher|jump|spike)", r"(drop|fall|down|lower|less|decline|cut)"
+
 KEYWORD_RULES: list[tuple[str, dict]] = [
     (r"severe drought|extreme drought", {"rainfall_multiplier": 0.3, "yield_stress_factor": 0.85,
                                          "water_availability_multiplier": 0.5}),
@@ -16,8 +20,7 @@ KEYWORD_RULES: list[tuple[str, dict]] = [
                                        "water_availability_multiplier": 0.7}),
     (r"flood|heavy rain|excess rain|cyclone", {"rainfall_multiplier": 1.7, "yield_stress_factor": 0.93}),
     (r"heat ?wave|heat stress", {"yield_stress_factor": 0.88}),
-    (r"(cost|input|fertili[sz]er|fuel|labou?r).{0,20}(rise|increase|up|shock|spike)|inflation",
-     {"input_cost_multiplier": 1.3}),
+    (r"(cost|input).{0,20}(rise|increase|up|higher|shock|spike)|inflation", {"input_cost_multiplier": 1.3}),
     (r"price.{0,20}(drop|fall|crash|down)|market.{0,10}(drop|crash)", {"market_price_multiplier": 0.75}),
     (r"price.{0,20}(rise|increase|boom|up)", {"market_price_multiplier": 1.2}),
 ]
@@ -60,20 +63,25 @@ class ScenarioAgent:
         return params
 
     def rule_based_interpretation(self, text: str) -> dict:
-        t = text.lower()
+        t = re.sub(INPUT_PRICE_PHRASE, "input cost", text.lower())
         params = {k: 1.0 for k in SCENARIO_LIMITS}
         for pattern, values in KEYWORD_RULES:
             if re.search(pattern, t):
                 for key, value in values.items():
                     if params[key] == 1.0:
                         params[key] = value
-        if m := re.search(r"(\d+)\s*%", t):
-            pct = int(m.group(1)) / 100
-            if re.search(r"price.{0,25}(drop|fall|down)", t):
-                params["market_price_multiplier"] = 1 - pct
-            elif re.search(r"(cost|input).{0,25}(rise|increase|up)", t):
+        for m in re.finditer(r"([+-]?)\s*(\d+(?:\.\d+)?)\s*%", t):
+            pct = float(m.group(2)) / 100
+            near = t[max(0, m.start() - 30):m.end() + 30]
+            up = m.group(1) == "+" or re.search(UP, near) is not None
+            down = m.group(1) == "-" or re.search(DOWN, near) is not None
+            if "input cost" in near and up:
                 params["input_cost_multiplier"] = 1 + pct
-            elif re.search(r"rain.{0,25}(drop|fall|down|less)", t):
+            elif "price" in near and down:
+                params["market_price_multiplier"] = 1 - pct
+            elif "price" in near and up:
+                params["market_price_multiplier"] = 1 + pct
+            elif "rain" in near and down:
                 params["rainfall_multiplier"] = 1 - pct
         return params
 
