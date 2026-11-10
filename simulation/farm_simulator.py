@@ -1,12 +1,15 @@
-"""Whole-farm simulation of one strategy under one scenario."""
+"""Whole-farm simulation of one strategy under one scenario.
+
+A demonstration model on synthetic data: transparent formulas, not a scientifically validated crop model.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from config import FALLOW, FALLOW_SOIL_EFFECT, SEASONS
+from config import DATA_DIR, FALLOW, FALLOW_SOIL_EFFECT, SEASONS, SIMULATOR_DISCLAIMER
 from core.chromosome import Chromosome, Gene
-from services.data_loader import Datasets
-from services.validation_service import FarmProfile
+from services.data_loader import Datasets, load_datasets, load_sample_farm
+from services.validation_service import FarmProfile, validate_farm_input
 from simulation import soil_simulator as soil_sim
 from simulation.crop_simulator import irrigation_need_mm, simulate_crop
 from simulation.water_simulator import supply_scale
@@ -71,11 +74,43 @@ def build_context(profile: FarmProfile, datasets: Datasets,
     return FarmContext(profile, crops, soil, options or basic_options(profile, crops))
 
 
+def sample_context(datasets: Datasets | None = None) -> FarmContext:
+    """Context for ``data/sample_farm.json``, loaded and validated through ``services.data_loader``."""
+    datasets = datasets or load_datasets(DATA_DIR)
+    farm = {k: v for k, v in load_sample_farm(DATA_DIR).items() if k not in ("data_note", "weights")}
+    profile = validate_farm_input(farm, datasets.crop_ids, datasets.soil_types)
+    return build_context(profile, datasets)
+
+
 @dataclass
 class SimulationResult:
+    """Per-gene rows and farm totals (USD, tonnes, m3, soil-health points) for one scenario."""
+
     scenario_id: str
     gene_results: list[dict]
     totals: dict
+    note: str = SIMULATOR_DISCLAIMER
+
+
+def index_genes(context: FarmContext, chromosome: Chromosome) -> dict[tuple[int, str], Gene]:
+    """Map (plot, season) to gene, rejecting strategies that do not cover the farm exactly once."""
+    slots, genes = set(context.slots), {}
+    for g in chromosome.genes:
+        key = (g.plot_id, g.season)
+        if key not in slots:
+            raise ValueError(f"Gene for plot {g.plot_id}, season {g.season!r} is outside this farm")
+        if key in genes:
+            raise ValueError(f"Strategy has two genes for plot {g.plot_id}, season {g.season!r}")
+        if not g.is_fallow and g.crop_id not in context.crops:
+            raise ValueError(f"Unknown crop_id {g.crop_id!r} for plot {g.plot_id}, season {g.season!r}")
+        for name in ("water_level", "fertilizer_level"):
+            if not 0.0 <= getattr(g, name) <= 1.0:
+                raise ValueError(f"{name} must be between 0 and 1 (got {getattr(g, name)})")
+        genes[key] = g
+    missing = [k for k in context.slots if k not in genes]
+    if missing:
+        raise ValueError(f"Strategy has no gene for plot-season slots {missing}")
+    return genes
 
 
 def _fallow_result(gene: Gene) -> dict:
@@ -101,7 +136,7 @@ def irrigation_demand_m3(context: FarmContext, chromosome: Chromosome,
 def simulate_farm(context: FarmContext, chromosome: Chromosome, scenario: Scenario) -> SimulationResult:
     """Simulate every gene; soil health carries over season to season on each plot."""
     profile, area = context.profile, context.profile.plot_area_ha
-    genes = {(g.plot_id, g.season): g for g in chromosome.genes}
+    genes = index_genes(context, chromosome)
 
     demand = sum(irrigation_demand_m3(context, chromosome, scenario).values())
     available = profile.available_water_m3 * scenario.water_availability_multiplier

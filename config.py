@@ -54,6 +54,11 @@ SCENARIO_LIMITS: dict[str, tuple[float, float]] = {
     "water_availability_multiplier": (0.0, 2.0),
 }
 
+SIMULATOR_DISCLAIMER = (
+    "The simulator uses simple, transparent formulas on synthetic data. It is a demonstration model, "
+    "not a scientifically validated crop model, and its outputs are not agronomic advice."
+)
+
 # Simulation constants (transparent, synthetic assumptions).
 MAX_FERTILIZER_RATIO = 1.25      # fertilizer_level 1.0 applies 125% of the crop requirement
 WATERLOGGING_THRESHOLD = 1.10    # water supply above 110% of requirement starts waterlogging

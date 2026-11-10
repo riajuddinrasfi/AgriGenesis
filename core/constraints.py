@@ -57,6 +57,8 @@ def check_constraints(context: FarmContext, chromosome: Chromosome,
     for gene in chromosome.genes:
         for problem in _gene_problems(context, gene):
             report.add("allocation", f"Plot {gene.plot_id}, {gene.season}: {problem}")
+    if not report.feasible:
+        return report  # resource totals are only meaningful once every gene is valid
 
     result = simulate_farm(context, chromosome, baseline)
     report.land_used_ha = result.totals["land_used_ha"]

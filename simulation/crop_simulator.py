@@ -9,7 +9,7 @@ from simulation import soil_simulator as soil_sim
 from simulation import water_simulator as water_sim
 from simulation.economic_simulator import cost_breakdown, revenue
 from simulation.weather_simulator import Scenario, seasonal_rainfall_mm, weather_factor
-from utils.calculations import mm_to_m3
+from utils.calculations import mm_to_m3, require_range
 
 
 def irrigation_need_mm(crop: dict, soil: dict, base_rainfall_mm: float, scenario: Scenario) -> float:
@@ -23,6 +23,11 @@ def simulate_crop(crop: dict, gene: Gene, area_ha: float, soil: dict, soil_ph: f
                   base_rainfall_mm: float, scenario: Scenario, soil_health: float,
                   repeats_family: bool, water_supply_scale: float = 1.0) -> dict:
     """Simulate one planted gene and return every intermediate factor for transparency."""
+    require_range("area_ha", area_ha, exclusive_low=True)
+    require_range("soil_health", soil_health, 0.0, 100.0)
+    require_range("soil_ph", soil_ph, 0.0, 14.0)
+    require_range("base_rainfall_mm", base_rainfall_mm)
+    require_range("water_supply_scale", water_supply_scale, 0.0, 1.0)
     rain = seasonal_rainfall_mm(base_rainfall_mm, scenario)
     effective = water_sim.effective_rainfall_mm(rain, soil["effective_rainfall_fraction"])
     need = water_sim.irrigation_need_mm(crop["water_requirement_mm"], effective)

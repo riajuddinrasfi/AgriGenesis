@@ -82,6 +82,9 @@ Weights are set in Farm Setup and normalised to sum to 1.
 
 ## Simulation assumptions
 
+> The simulator is a transparent demonstration model running on synthetic data. It is not scientifically validated and its outputs are not agronomic advice.
+
+
 ```
 yield = area x base_yield x water_factor x soil_factor x weather_factor x nutrient_factor
 ```
