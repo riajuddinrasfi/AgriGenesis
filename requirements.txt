@@ -1,5 +1,5 @@
 # Runtime (tested with Python 3.13, streamlit 1.67, pandas 3.1, numpy 2.5, plotly 7.1, google-genai 3.0)
-streamlit>=1.50
+streamlit>=1.52
 pandas>=2.2
 numpy>=1.26
 plotly>=5.24
