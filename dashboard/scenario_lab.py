@@ -48,8 +48,9 @@ def render() -> None:
     builtin = orch.scenario.available()
     st.markdown("Scenarios scale rainfall, yields, input costs, prices and water. The GA's resilience score is "
                 "the average share of normal-condition profit a strategy keeps across the selected scenarios.")
+    st.markdown('<span style="display:inline-block;background:#f1f1f1;color:#000;padding:4px 9px;border-radius:6px;font-weight:600;">Built-in scenarios used for optimisation</span>', unsafe_allow_html=True)
     ids = st.multiselect("Built-in scenarios used for optimisation", list(builtin), st.session_state.scenario_ids,
-                         format_func=lambda s: builtin[s].scenario_name)
+                         format_func=lambda s: builtin[s].scenario_name, label_visibility="collapsed")
     st.session_state.scenario_ids = ids
     st.caption("Normal conditions are always included as the baseline.")
 
