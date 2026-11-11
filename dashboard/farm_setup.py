@@ -63,8 +63,9 @@ def _form() -> None:
         water = c1.number_input("Available irrigation water (m3, whole plan)", 0.0, 10_000_000.0,
                                 float(data.get("available_water_m3", 0.0)), 500.0)
         budget = c2.number_input("Budget (USD, whole plan)", 0.0, 10_000_000.0, float(data.get("budget_usd", 0.0)), 500.0)
+        st.markdown('<span style="display:inline-block;background:#f1f1f1;color:#000;padding:4px 9px;border-radius:6px;font-weight:600;">Seasons to plan</span>', unsafe_allow_html=True)
         seasons = st.multiselect("Seasons to plan", list(SEASONS), [s for s in data.get("seasons", []) if s in SEASONS],
-                                 format_func=lambda s: SEASONS[s]["name"])
+                                 format_func=lambda s: SEASONS[s]["name"], label_visibility="collapsed")
         rain_cols = st.columns(len(SEASONS))
         rainfall = {s: col.number_input(f"{SEASONS[s]['name']} rainfall (mm)", 0.0, 5000.0,
                                         float((data.get("rainfall_mm") or {}).get(s) or 0.0), 10.0)
