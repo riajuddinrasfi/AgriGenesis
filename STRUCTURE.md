@@ -22,7 +22,7 @@ AgriGenesis/
 ├── .env                        # Your local secrets (git-ignored, never committed)
 ├── .gitignore
 ├── .streamlit/
-│   └── config.toml             # Dark theme with purple accent
+│   └── config.toml             # Dark theme with lime accent
 │
 ├── agents/                     # One agent per pipeline step
 │   ├── orchestrator.py         # Runs the full pipeline and returns the result dictionary
