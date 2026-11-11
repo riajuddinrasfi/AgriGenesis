@@ -26,8 +26,12 @@ def _component():
     )
 
 
+def _go_to_evolution() -> None:
+    st.session_state.page = "Evolution Lab"
+
+
 def render_bento(data: dict, key: str = "farm_bento") -> None:
-    _component()(data=data, key=key, width="stretch", height="content")
+    _component()(data=data, key=key, width="stretch", height="content", on_go_change=_go_to_evolution)
 
 
 def _season_name(season: str) -> str:

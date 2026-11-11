@@ -55,8 +55,10 @@ def apply_theme() -> None:
 def style_figure(fig, height: int = 360):
     fig.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                       font=dict(family="Geist, sans-serif", color="rgba(255,255,255,.75)"),
-                      colorway=PALETTE, height=height, margin=dict(l=10, r=10, t=40, b=10),
-                      legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
+                      colorway=PALETTE, height=height,
+                      margin=dict(l=10, r=10, t=90 if fig.layout.title.text else 40, b=10),
+                      title=dict(y=0.98, yanchor="top"),
+                      legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0, title_text=""))
     return fig
 
 

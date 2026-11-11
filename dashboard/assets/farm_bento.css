@@ -36,7 +36,7 @@
 .fpb .top h1 span{display:block;margin:4px 0 0}
 .fpb .ctrls{order:3;flex:1 0 100%;justify-content:space-between}
 .fpb .ava{order:2}
-.fpb #nw{height:420px}
+.fpb #nw{height:480px}
 .fpb #nw .legend{flex:1 0 100%;order:3;margin-top:8px}
 .fpb #nw .hrow{flex-wrap:wrap}
 .fpb #nw .nrow{flex-wrap:wrap;gap:6px 16px}
@@ -93,7 +93,7 @@
 .fpb .pill i{width:6px;height:6px;border-radius:50%;background:var(--t3)}
 .fpb .pill.on i{background:var(--acc);box-shadow:0 0 8px var(--acc)}
 .fpb .note{margin-top:12px;font-size:11.5px;color:var(--t3);letter-spacing:-.01em}
-.fpb .cta{display:inline-flex;align-items:center;height:30px;padding:0 14px;border-radius:15px;background:var(--acc);color:#0b0b0c;font:600 12.5px Geist,sans-serif}
+.fpb .cta{display:inline-flex;align-items:center;height:30px;padding:0 14px;border-radius:15px;background:var(--acc);color:#0b0b0c;font:600 12.5px Geist,sans-serif;border:0;cursor:pointer}
 .fpb .empty{position:absolute;left:24px;right:24px;bottom:22px}
 .fpb .seg button{white-space:nowrap}
 @container fpb (max-width:619px){.fpb .pills{order:4;flex:1 0 100%}}

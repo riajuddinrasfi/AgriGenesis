@@ -321,7 +321,7 @@ function emptyMode(){
   const nwE=$id('nw');
   nwE.innerHTML=`${bg(GR.blue)}<div class="in-c"><div class="row" style="justify-content:space-between"><div class="ttl">Seasonal budget</div><span class="chip">${esc(f.status)}</span></div>
     <div class="row" style="margin-top:16px;align-items:flex-end;gap:16px"><div class="nwn"></div><div style="padding-bottom:6px"><div class="muted">${esc(f.name)} · ${num(f.area,1)} ha · ${f.plots} plots</div></div></div>
-    <div class="empty"><div class="muted" style="font-size:13px;max-width:460px;margin-bottom:14px">${esc(f.hint)}</div><span class="cta">${esc(f.cta)}</span></div></div><div class="rim"></div>`;
+    <div class="empty"><div class="muted" style="font-size:13px;max-width:460px;margin-bottom:14px">${esc(f.hint)}</div><button type="button" class="cta" data-go>${esc(f.cta)}</button></div></div><div class="rim"></div>`;
   const dn=DotNumber(nwE.querySelector('.nwn'),innerWidth<520?5.4:7);
   const alE=$id('alloc'),cols=['#FFFFFF','#A9B2FF','#FFB37A','rgba(255,255,255,.35)'];
   alE.innerHTML=`${bg(GR.graph)}<div class="in-c"><div class="row" style="justify-content:space-between"><div class="ttl">Rainfall by season</div><span class="chip">${num(rain)} mm</span></div>
@@ -351,6 +351,8 @@ export default function (component) {
   if (!host) { host = document.createElement("div"); host.className = "fpb"; parentElement.appendChild(host); }
   host.innerHTML = markup(data);
   const stop = mount(host, data);
+  const go = host.querySelector("[data-go]");
+  if (go) go.onclick = () => component.setTriggerValue("go", true);
   parentElement.__fpbKey = key;
   parentElement.__fpbStop = () => { stop(); parentElement.__fpbKey = null; parentElement.__fpbStop = null; };
   return parentElement.__fpbStop;
