@@ -5,8 +5,8 @@ import streamlit as st
 
 st.set_page_config(page_title="AgriGenesis", page_icon=":seedling:", layout="wide")
 
-from dashboard import (apply_theme, evolution_lab, farm_setup, init_state, overview,  # noqa: E402
-                       research_report, result_is_stale, scenario_lab, strategy_comparison)
+from dashboard import (apply_theme, badge, evolution_lab, farm_setup, get_orchestrator, init_state,  # noqa: E402
+                       overview, research_report, result_is_stale, scenario_lab, strategy_comparison)
 
 PAGES = {
     "Overview": overview.render,
@@ -24,6 +24,9 @@ def main() -> None:
     with st.sidebar:
         st.markdown("## AgriGenesis")
         st.caption("Evolutionary Agriculture Strategy Laboratory")
+        gemini = get_orchestrator().gemini.available
+        st.markdown(badge("Gemini connected" if gemini else "Gemini not configured (rule-based fallback)"),
+                    unsafe_allow_html=True)
         page = st.radio("Navigate", list(PAGES), key="page", label_visibility="collapsed")
         st.divider()
         status = st.empty()

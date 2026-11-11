@@ -7,21 +7,43 @@ from agents.orchestrator import Orchestrator
 from config import DEFAULT_WEIGHTS, GAConfig
 from services.data_loader import load_sample_farm
 
-ACCENT = "#8B5CF6"
-ACCENT_LIGHT = "#C4B5FD"
-MUTED = "#64748B"
-PALETTE = [ACCENT, "#A78BFA", "#38BDF8", "#94A3B8", "#F472B6", "#FBBF24", "#34D399", "#F87171", "#E2E8F0"]
+ACCENT = "#E8FF1F"
+ACCENT_LIGHT = "#A9B2FF"
+MUTED = "#8A8A94"
+PALETTE = [ACCENT, "#A9B2FF", "#FFB37A", "#FF5FA2", "#5CD6A0", "#6D7DFF", "#F4FFB8", "#FFD0E6", "#FFFFFF"]
 
+# Black canvas, glass cards and a lime accent, matching the Overview bento (dashboard/assets/farm_bento.css).
 CSS = f"""
 <style>
-.block-container {{padding-top: 2rem; max-width: 1300px;}}
-div[data-testid="stMetric"] {{background: #1A1C25; border: 1px solid #2A2D3A; border-radius: 10px;
-  padding: 12px 16px;}}
-div[data-testid="stMetricValue"] {{font-size: 1.5rem;}}
-h1, h2, h3 {{letter-spacing: -0.01em;}}
-.ag-badge {{display:inline-block; padding:2px 10px; border-radius:999px; background:{ACCENT}22;
-  color:{ACCENT_LIGHT}; border:1px solid {ACCENT}55; font-size:0.8rem; margin-right:6px;}}
-.ag-note {{color:#9CA3AF; font-size:0.85rem;}}
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+html, body, .stApp, [data-testid="stSidebar"], button, input, textarea, select {{
+  font-family: Geist, ui-sans-serif, system-ui, -apple-system, sans-serif;}}
+code, pre, [data-testid="stMetricValue"] {{font-family: "Geist Mono", ui-monospace, monospace;}}
+.stApp {{background: #000;}}
+.block-container {{padding-top: 3.5rem; max-width: 1360px;}}
+[data-testid="stSidebar"] {{background: #0b0b0c; border-right: 1px solid rgba(255,255,255,.08);}}
+h1, h2, h3 {{letter-spacing: -0.03em; font-weight: 500;}}
+div[data-testid="stMetric"] {{background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 22px; padding: 16px 20px; backdrop-filter: blur(18px);}}
+div[data-testid="stMetricLabel"] p {{color: rgba(255,255,255,.56); font-size: .8rem; font-weight: 500;}}
+div[data-testid="stMetricValue"] {{font-size: 1.55rem; letter-spacing: -0.04em;}}
+[data-testid="stVerticalBlockBorderWrapper"], [data-testid="stExpander"] details, [data-testid="stForm"] {{
+  border-radius: 22px !important; border-color: rgba(255,255,255,.12) !important; background: rgba(255,255,255,.03);}}
+[data-testid="stDataFrame"], [data-testid="stTable"], [data-testid="stPlotlyChart"] {{border-radius: 18px; overflow: hidden;}}
+[data-testid="stPlotlyChart"] {{background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); padding: 6px;}}
+.stButton button, .stDownloadButton button, [data-testid="stFormSubmitButton"] button {{border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16); font-weight: 600;}}
+.stButton button[kind^="primary"], [data-testid="stFormSubmitButton"] button[kind^="primary"],
+[data-testid="stFormSubmitButton"] button {{
+  background: {ACCENT}; border-color: {ACCENT}; color: #0b0b0c;}}
+span[data-baseweb="tag"], span[data-baseweb="tag"] * {{color: #0b0b0c !important; font-weight: 600;}}
+.stButton button[kind^="primary"]:hover, [data-testid="stFormSubmitButton"] button:hover {{background: #F4FFB8; border-color: #F4FFB8; color: #0b0b0c;}}
+[data-testid="stAlert"] {{border-radius: 18px;}}
+.ag-badge {{display:inline-flex; align-items:center; gap:6px; height:24px; padding:0 10px; border-radius:12px;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.72);
+  font: 600 11px "Geist Mono", monospace; margin:0 6px 6px 0;}}
+.ag-badge::before {{content:""; width:6px; height:6px; border-radius:50%; background:{ACCENT}; box-shadow:0 0 8px {ACCENT};}}
+.ag-note {{color: rgba(255,255,255,.45); font-size:0.85rem;}}
 </style>
 """
 
@@ -32,6 +54,7 @@ def apply_theme() -> None:
 
 def style_figure(fig, height: int = 360):
     fig.update_layout(template="plotly_dark", paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                      font=dict(family="Geist, sans-serif", color="rgba(255,255,255,.75)"),
                       colorway=PALETTE, height=height, margin=dict(l=10, r=10, t=40, b=10),
                       legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
     return fig
